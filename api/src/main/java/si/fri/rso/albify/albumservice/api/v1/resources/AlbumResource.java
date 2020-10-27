@@ -2,10 +2,12 @@ package si.fri.rso.albify.albumservice.api.v1.resources;
 
 import org.bson.types.ObjectId;
 import si.fri.rso.albify.albumservice.lib.Album;
+import si.fri.rso.albify.albumservice.lib.Image;
 import si.fri.rso.albify.albumservice.lib.ImageId;
 import si.fri.rso.albify.albumservice.models.converters.AlbumConverter;
 import si.fri.rso.albify.albumservice.models.entities.AlbumEntity;
 import si.fri.rso.albify.albumservice.services.beans.AlbumBean;
+import si.fri.rso.albify.albumservice.services.beans.ImageServiceBean;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,7 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -28,6 +29,9 @@ public class AlbumResource {
 
     @Inject
     private AlbumBean albumBean;
+
+    @Inject
+    private ImageServiceBean imageServiceBean;
 
     @Context
     protected UriInfo uriInfo;
@@ -74,7 +78,24 @@ public class AlbumResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.status(Response.Status.OK).entity(AlbumConverter.toDto(entity)).build();
+        return Response
+                .status(Response.Status.OK).entity(AlbumConverter.toDto(entity)).build();
+    }
+
+    @GET
+    @Path("/{albumId}/images")
+    public Response getAlbumImages(@PathParam("albumId") String albumId) {
+        AlbumEntity entity = albumBean.getAlbum(albumId);
+        if (entity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        List<Image> images = imageServiceBean.getImages((AlbumConverter.toDto(entity)).getImages());
+        long count = imageServiceBean.getImagesCount((AlbumConverter.toDto(entity)).getImages());
+        return Response
+                .status(Response.Status.OK)
+                .header("X-Total-Count", count)
+                .entity(images).build();
     }
 
     @PUT
@@ -89,7 +110,11 @@ public class AlbumResource {
             return Response.status(400, "Image ID is not present.").build();
         }
 
-        // TODO: Check if image exists.
+        Image image = imageServiceBean.getImage(imageId.getId());
+        if (image == null || image.getId() == null) {
+            return Response.status(404, "Image doesn't exists.").build();
+        }
+
         AlbumEntity updatedEntity = albumBean.addImageToAlbum(albumId, new ObjectId(imageId.getId()));
         if (updatedEntity == null) {
             return Response.status(500, "There was a problem while adding image to album.").build();
@@ -105,7 +130,11 @@ public class AlbumResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        // TODO: Check if image exist.
+        Image image = imageServiceBean.getImage(imageId);
+        if (image == null || image.getId() == null) {
+            return Response.status(404, "Image doesn't exists.").build();
+        }
+
         if (!entity.getImages().contains(new ObjectId(imageId))) {
             return Response.status(400, "Image is not in provided album.").build();
         }

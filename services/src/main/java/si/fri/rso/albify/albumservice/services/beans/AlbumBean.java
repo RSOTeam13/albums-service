@@ -17,6 +17,7 @@ import si.fri.rso.albify.albumservice.models.entities.AlbumEntity;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -101,6 +102,8 @@ public class AlbumBean {
         try {
             AlbumEntity entity = AlbumConverter.toEntity(album);
             entity.setImages(new ArrayList<>());
+            entity.setCreatedAt(new Date());
+
             InsertOneResult result = albumsCollection.insertOne(entity);
             if (result != null) {
                 return entity;

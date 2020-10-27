@@ -5,9 +5,7 @@ import si.fri.rso.albify.albumservice.lib.Album;
 import si.fri.rso.albify.albumservice.models.entities.AlbumEntity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AlbumConverter {
 
@@ -16,6 +14,7 @@ public class AlbumConverter {
         Album dto = new Album();
         dto.setId(entity.getId().toString());
         dto.setName(entity.getName());
+        dto.setCreatedAt(entity.getCreatedAt());
 
         List<String> parsedImages = new ArrayList<>();
         for (ObjectId image : entity.getImages()) {

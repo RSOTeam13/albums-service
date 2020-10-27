@@ -3,12 +3,22 @@ package si.fri.rso.albify.albumservice.models.entities;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AlbumEntity {
 
     private ObjectId id;
     private String name;
     private ArrayList<ObjectId> images;
+    private Date createdAt;
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public ArrayList<ObjectId> getImages() {
         return images;
