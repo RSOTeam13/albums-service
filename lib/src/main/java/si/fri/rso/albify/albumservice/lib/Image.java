@@ -2,11 +2,9 @@ package si.fri.rso.albify.albumservice.lib;
 
 import java.util.Date;
 
-public class Album {
+public class Image {
 
     private String id;
-    private String name;
-    private String[] images;
     private Date createdAt;
 
     public Date getCreatedAt() {
@@ -17,14 +15,6 @@ public class Album {
         this.createdAt = createdAt;
     }
 
-    public String[] getImages() {
-        return images;
-    }
-
-    public void setImages(String[] images) {
-        this.images = images;
-    }
-
     public String getId() {
         return id;
     }
@@ -33,11 +23,4 @@ public class Album {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
