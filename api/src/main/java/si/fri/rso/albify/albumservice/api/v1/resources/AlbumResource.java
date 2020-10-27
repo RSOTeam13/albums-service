@@ -2,6 +2,7 @@ package si.fri.rso.albify.albumservice.api.v1.resources;
 
 import org.bson.types.ObjectId;
 import si.fri.rso.albify.albumservice.lib.Album;
+import si.fri.rso.albify.albumservice.lib.ImageId;
 import si.fri.rso.albify.albumservice.models.converters.AlbumConverter;
 import si.fri.rso.albify.albumservice.models.entities.AlbumEntity;
 import si.fri.rso.albify.albumservice.services.beans.AlbumBean;
@@ -74,5 +75,45 @@ public class AlbumResource {
         }
 
         return Response.status(Response.Status.OK).entity(AlbumConverter.toDto(entity)).build();
+    }
+
+    @PUT
+    @Path("/{albumId}/images")
+    public Response addImageToAlbum(@PathParam("albumId") String albumId, ImageId imageId) {
+        AlbumEntity entity = albumBean.getAlbum(albumId);
+        if (entity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (imageId == null || imageId.getId() == null) {
+            return Response.status(400, "Image ID is not present.").build();
+        }
+
+        // TODO: Check if image exists.
+        AlbumEntity updatedEntity = albumBean.addImageToAlbum(albumId, new ObjectId(imageId.getId()));
+        if (updatedEntity == null) {
+            return Response.status(500, "There was a problem while adding image to album.").build();
+        }
+        return Response.status(Response.Status.OK).entity(AlbumConverter.toDto(updatedEntity)).build();
+    }
+
+    @DELETE
+    @Path("/{albumId}/images/{imageId}")
+    public Response removeImageFromAlbum(@PathParam("albumId") String albumId, @PathParam("imageId") String imageId) {
+        AlbumEntity entity = albumBean.getAlbum(albumId);
+        if (entity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        // TODO: Check if image exist.
+        if (!entity.getImages().contains(new ObjectId(imageId))) {
+            return Response.status(400, "Image is not in provided album.").build();
+        }
+
+        AlbumEntity updatedEntity = albumBean.removeImageFromAlbum(albumId, new ObjectId(imageId));
+        if (updatedEntity == null) {
+            return Response.status(500, "There was a problem while removing image from album.").build();
+        }
+        return Response.status(Response.Status.OK).entity(AlbumConverter.toDto(updatedEntity)).build();
     }
 }

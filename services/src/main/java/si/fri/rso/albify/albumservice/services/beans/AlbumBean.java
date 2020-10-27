@@ -1,8 +1,11 @@
 package si.fri.rso.albify.albumservice.services.beans;
 
 import com.kumuluz.ee.rest.beans.QueryParameters;
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import com.mongodb.client.result.InsertOneResult;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -97,6 +100,7 @@ public class AlbumBean {
     public AlbumEntity createAlbum(Album album) {
         try {
             AlbumEntity entity = AlbumConverter.toEntity(album);
+            entity.setImages(new ArrayList<>());
             InsertOneResult result = albumsCollection.insertOne(entity);
             if (result != null) {
                 return entity;
@@ -116,6 +120,53 @@ public class AlbumBean {
     public AlbumEntity removeAlbum(String albumId) {
         try {
             AlbumEntity entity = albumsCollection.findOneAndDelete(eq("_id", new ObjectId(albumId)));
+            if (entity != null && entity.getId() != null) {
+                return entity;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * Adds image to album.
+     * @param albumId Album ID.
+     * @param imageId ID of the images to add to album.
+     * @return Updated album.
+     */
+    public AlbumEntity addImageToAlbum(String albumId, ObjectId imageId) {
+        try {
+            AlbumEntity entity = albumsCollection.findOneAndUpdate(
+                    eq("_id", new ObjectId(albumId)),
+                    new BasicDBObject("$addToSet", new BasicDBObject("images", imageId)),
+                    new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+            );
+
+            if (entity != null && entity.getId() != null) {
+                return entity;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Removes image from the album.
+     * @param albumId Album ID.
+     * @param imageId ID of the image to remove from album.
+     * @return Updated album.
+     */
+    public AlbumEntity removeImageFromAlbum(String albumId, ObjectId imageId) {
+        try {
+            AlbumEntity entity = albumsCollection.findOneAndUpdate(
+                    eq("_id", new ObjectId(albumId)),
+                    new BasicDBObject("$pull", new BasicDBObject("images", imageId)),
+                    new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+            );
+
             if (entity != null && entity.getId() != null) {
                 return entity;
             }

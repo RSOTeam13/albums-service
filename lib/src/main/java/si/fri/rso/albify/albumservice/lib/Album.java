@@ -1,8 +1,18 @@
 package si.fri.rso.albify.albumservice.lib;
 
 public class Album {
+
     private String id;
     private String name;
+    private String[] images;
+
+    public String[] getImages() {
+        return images;
+    }
+
+    public void setImages(String[] images) {
+        this.images = images;
+    }
 
     public String getId() {
         return id;
