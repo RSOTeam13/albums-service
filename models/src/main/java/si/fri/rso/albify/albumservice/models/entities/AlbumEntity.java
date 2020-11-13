@@ -8,9 +8,18 @@ import java.util.Date;
 public class AlbumEntity {
 
     private ObjectId id;
+    private ObjectId userId;
     private String name;
     private ArrayList<ObjectId> images;
     private Date createdAt;
+
+    public ObjectId getUserId() {
+        return userId;
+    }
+
+    public void setUserId(ObjectId userId) {
+        this.userId = userId;
+    }
 
     public Date getCreatedAt() {
         return createdAt;

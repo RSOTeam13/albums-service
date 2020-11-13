@@ -13,6 +13,7 @@ public class AlbumConverter {
 
         Album dto = new Album();
         dto.setId(entity.getId().toString());
+        dto.setUserId(entity.getUserId().toString());
         dto.setName(entity.getName());
         dto.setCreatedAt(entity.getCreatedAt());
 

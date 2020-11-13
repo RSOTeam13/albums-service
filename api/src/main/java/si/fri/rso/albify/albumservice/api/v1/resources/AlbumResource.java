@@ -1,6 +1,7 @@
 package si.fri.rso.albify.albumservice.api.v1.resources;
 
 import org.bson.types.ObjectId;
+import org.glassfish.jersey.server.ContainerRequest;
 import si.fri.rso.albify.albumservice.lib.Album;
 import si.fri.rso.albify.albumservice.lib.Image;
 import si.fri.rso.albify.albumservice.lib.ImageId;
@@ -8,8 +9,10 @@ import si.fri.rso.albify.albumservice.models.converters.AlbumConverter;
 import si.fri.rso.albify.albumservice.models.entities.AlbumEntity;
 import si.fri.rso.albify.albumservice.services.beans.AlbumBean;
 import si.fri.rso.albify.albumservice.services.beans.ImageServiceBean;
+import si.fri.rso.albify.albumservice.services.filters.Authenticate;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -38,7 +41,8 @@ public class AlbumResource {
 
     @GET
     @Path("/{albumId}")
-    public Response getAlbum(@PathParam("albumId") String albumId) {
+    @Authenticate
+    public Response getAlbum(@PathParam("albumId") String albumId, @Context ContainerRequest request) {
         if (!ObjectId.isValid(albumId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -47,16 +51,23 @@ public class AlbumResource {
         if (entity == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        if (!entity.getUserId().toString().equals(request.getProperty("userId").toString())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         return Response.status(Response.Status.OK).entity(AlbumConverter.toDto(entity)).build();
     }
 
     @GET
+    @Authenticate
     public Response getAlbums() {
         List<Album> albums = albumBean.getAlbums(uriInfo);
         return Response.status(Response.Status.OK).entity(albums).build();
     }
 
     @POST
+    @Authenticate
     public Response createAlbum(Album album) {
         if (album == null || album.getName() == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -68,6 +79,7 @@ public class AlbumResource {
 
     @DELETE
     @Path("/{albumId}")
+    @Authenticate
     public Response removeAlbum(@PathParam("albumId") String albumId) {
         if (!ObjectId.isValid(albumId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -84,7 +96,9 @@ public class AlbumResource {
 
     @GET
     @Path("/{albumId}/images")
+    @Authenticate
     public Response getAlbumImages(@PathParam("albumId") String albumId) {
+
         AlbumEntity entity = albumBean.getAlbum(albumId);
         if (entity == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -100,10 +114,15 @@ public class AlbumResource {
 
     @PUT
     @Path("/{albumId}/images")
-    public Response addImageToAlbum(@PathParam("albumId") String albumId, ImageId imageId) {
+    @Authenticate
+    public Response addImageToAlbum(@PathParam("albumId") String albumId, ImageId imageId, @Context ContainerRequest request) {
         AlbumEntity entity = albumBean.getAlbum(albumId);
         if (entity == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!entity.getUserId().toString().equals(request.getProperty("userId").toString())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         if (imageId == null || imageId.getId() == null) {
@@ -124,10 +143,15 @@ public class AlbumResource {
 
     @DELETE
     @Path("/{albumId}/images/{imageId}")
-    public Response removeImageFromAlbum(@PathParam("albumId") String albumId, @PathParam("imageId") String imageId) {
+    @Authenticate
+    public Response removeImageFromAlbum(@PathParam("albumId") String albumId, @PathParam("imageId") String imageId, @Context ContainerRequest request) {
         AlbumEntity entity = albumBean.getAlbum(albumId);
         if (entity == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!entity.getUserId().toString().equals(request.getProperty("userId").toString())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         Image image = imageServiceBean.getImage(imageId);

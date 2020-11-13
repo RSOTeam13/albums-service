@@ -5,9 +5,18 @@ import java.util.Date;
 public class Album {
 
     private String id;
+    private String userId;
     private String name;
     private String[] images;
     private Date createdAt;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public Date getCreatedAt() {
         return createdAt;
