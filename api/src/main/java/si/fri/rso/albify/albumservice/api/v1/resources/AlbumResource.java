@@ -60,7 +60,7 @@ public class AlbumResource {
     }
 
     @GET
-    @Authenticate
+    // @Authenticate
     public Response getAlbums() {
         List<Album> albums = albumBean.getAlbums(uriInfo);
         return Response.status(Response.Status.OK).entity(albums).build();
