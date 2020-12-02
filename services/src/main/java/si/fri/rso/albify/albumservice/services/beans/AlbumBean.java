@@ -44,7 +44,7 @@ public class AlbumBean {
                     fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
     private final MongoClientSettings settings = MongoClientSettings.builder()
-                    .applyConnectionString(new ConnectionString("mongodb://localhost:27017/rso"))
+                    .applyConnectionString(new ConnectionString(System.getenv("DB_URL")))
                     .codecRegistry(pojoCodecRegistry)
                     .build();
 
