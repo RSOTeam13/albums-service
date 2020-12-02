@@ -15,7 +15,7 @@ env:
   - secure: RrB2EKXOAe2dzSBcAjVUWrYTBNW707KxvNfGDF6TzJE80WXfj6Ke+5eeR8M64Ne0fy0JmTBk822xE/ubSt3zXKAjGOBp1oYdeRiV8Dcptti4I5VgntzG2jn/wjYLEwhejr2B2TrPPPM20to17oC/2C/yWIflIOhBtQFdbjUZSuusZa3vRf4KL3uvsXp7VMkz9COkF+qz6U4Bt9q6ew9QhNkzeAhGnnjIZ6bcg1w64jdW9HU5Evh778DvKXQnHZcM6LYL+nSWY0aQIeADSA8S46VzIiHhcu8SNXPGf2dGZbwZythnhKCKTbNDf9FaN7Upwzk5JL1BubLsOn8CCr+NTMIymiUbOFzYK1o+X07NgA3i0TCcOCMkdJDB4E/AcMu6h1n/97RnTDilpXCNL7TuiCf6y+7Ps33gyadNhbsRQNHevQ6hTVhNBvnQbmNsgRP6670gZ7kf/D48STDr/YlzzF1PGPNTzXiPx270ieMmkU1SY+SOvcnoNsp14SqY2K+WyDEn34eTnYYyOKZ+P3XM3CVneSkhddj66nyNuNrmAFGd5c2JB2CupZLmhwHwHKhgPAHoXURMbG9ji46M2VZjkC32Fj/DTedBv+cyL3uJyyAuYStx1r4BSzvtpybPzbhx1rgAaav+Q14Nj2FLgBRpOLTTBBRukqhG3gKiULGjhxs=
 script:
 - mvn clean package -U
-- docker build -t "$DOCKER_USERNAME"/"$DOCKER_IMAGE" .
+- docker build -t "$DOCKER_USERNAME"/"$DOCKER_IMAGE" -t "$DOCKER_USERNAME"/"album-service-api:latest" .
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - docker push "$DOCKER_USERNAME"/"$DOCKER_IMAGE"
