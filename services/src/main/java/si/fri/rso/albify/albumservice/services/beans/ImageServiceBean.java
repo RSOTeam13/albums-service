@@ -4,15 +4,16 @@ import org.glassfish.jersey.server.ContainerRequest;
 import si.fri.rso.albify.albumservice.lib.Image;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.GenericType;
 import java.util.List;
 import java.util.logging.Logger;
+import si.fri.rso.albify.albumservice.services.filters.OutgoingRequestFilter;;
 
-@ApplicationScoped
+@RequestScoped
 public class ImageServiceBean {
 
     @Inject
@@ -25,8 +26,8 @@ public class ImageServiceBean {
 
     @PostConstruct
     private void init() {
-        httpClient = ClientBuilder.newClient();
-        baseUrl = "http://image-service:8080/v1";
+        httpClient = ClientBuilder.newClient().register(new OutgoingRequestFilter(request));
+        baseUrl = "http://localhost:8081/v1";
     }
 
     /**
@@ -38,7 +39,6 @@ public class ImageServiceBean {
         return httpClient
                 .target(baseUrl + "/images/" + imageId)
                 .request()
-                .header("Authorization", request.getHeaderString("Authorization"))
                 .get(new GenericType<Image>() {});
     }
 
@@ -58,7 +58,6 @@ public class ImageServiceBean {
         return httpClient
                 .target(url)
                 .request()
-                .header("Authorization", request.getHeaderString("Authorization"))
                 .get(new GenericType<List<Image>>() {});
     }
 
@@ -79,7 +78,6 @@ public class ImageServiceBean {
         return httpClient
                 .target(url)
                 .request()
-                .header("Authorization", request.getHeaderString("Authorization"))
                 .get(new GenericType<Long>() {});
     }
 

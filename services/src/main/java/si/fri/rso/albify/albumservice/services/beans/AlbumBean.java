@@ -76,7 +76,7 @@ public class AlbumBean {
      * @return List of albums.
      */
     public List<Album> getAlbums(UriInfo uriInfo) {
-        // String userId = request.getProperty("userId").toString();
+        String userId = request.getProperty("userId").toString();
         QueryParameters queryParameters = QueryParameters.query(uriInfo
                 .getRequestUri()
                 .getQuery())
@@ -87,8 +87,7 @@ public class AlbumBean {
 
         try {
             return albumsCollection
-                    .find()
-                    // .find(eq("userId", new ObjectId(userId)))
+                    .find(eq("userId", new ObjectId(userId)))
                     .limit(queryParameters.getLimit().intValue())
                     .skip(queryParameters.getOffset().intValue())
                     .into(new ArrayList<>())

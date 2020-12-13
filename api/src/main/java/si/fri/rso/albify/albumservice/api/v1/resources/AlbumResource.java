@@ -12,7 +12,6 @@ import si.fri.rso.albify.albumservice.services.beans.ImageServiceBean;
 import si.fri.rso.albify.albumservice.services.filters.Authenticate;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -21,7 +20,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.logging.Logger;
+import com.kumuluz.ee.logs.cdi.Log;
 
+@Log
 @ApplicationScoped
 @Path("/albums")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -60,7 +61,7 @@ public class AlbumResource {
     }
 
     @GET
-    // @Authenticate
+    @Authenticate
     public Response getAlbums() {
         List<Album> albums = albumBean.getAlbums(uriInfo);
         return Response.status(Response.Status.OK).entity(albums).build();
