@@ -21,12 +21,14 @@ import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.logging.Logger;
 import com.kumuluz.ee.logs.cdi.Log;
+import com.kumuluz.ee.cors.annotations.CrossOrigin;
 
 @Log
 @ApplicationScoped
 @Path("/albums")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@CrossOrigin(name = "albums-resource")
 public class AlbumResource {
 
     private Logger log = Logger.getLogger(AlbumResource.class.getName());
