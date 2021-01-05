@@ -27,7 +27,8 @@ public class ImageServiceBean {
     @PostConstruct
     private void init() {
         httpClient = ClientBuilder.newClient().register(new OutgoingRequestFilter(request));
-        baseUrl = "http://localhost:8081/v1";
+        baseUrl = "http://image-service:8080/v1";
+        // baseUrl = "http://localhost:8081/v1";
     }
 
     /**

@@ -10,7 +10,7 @@ kumuluzee:
   cors-filter:
     annotations:
       albums-resource:
-        allow-origin: "http://localhost:3000"
+        allow-origin: "*"
         allow-subdomains: true
         supported-methods: "GET, POST, DELETE, HEAD, OPTIONS, PUT"
   logs:
