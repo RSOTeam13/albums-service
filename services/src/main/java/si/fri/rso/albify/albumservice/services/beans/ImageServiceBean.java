@@ -37,10 +37,17 @@ public class ImageServiceBean {
      * @return Image.
      */
     public Image getImage(String imageId) {
-        return httpClient
-                .target(baseUrl + "/images/" + imageId)
-                .request()
-                .get(new GenericType<Image>() {});
+        try {
+            System.out.println("INFOOOOO: Calling images service!");
+            return httpClient
+                    .target(baseUrl + "/images/" + imageId)
+                    .request()
+                    .get(new GenericType<Image>() {});
+        } catch (Exception e) {
+            System.out.println("INFOOOOO: Images service error.");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -48,18 +55,24 @@ public class ImageServiceBean {
      * @return List of images.
      */
     public List<Image> getImages(String[] images) {
-        String url = baseUrl + "/images";
-        if (images.length > 0) {
-            url += "?";
-            for (String image : images) {
-                url += "filterIds=" + image + "&";
+        try {
+            String url = baseUrl + "/images";
+            if (images.length > 0) {
+                url += "?";
+                for (String image : images) {
+                    url += "filterIds=" + image + "&";
+                }
             }
-        }
 
-        return httpClient
-                .target(url)
-                .request()
-                .get(new GenericType<List<Image>>() {});
+            return httpClient
+                    .target(url)
+                    .request()
+                    .get(new GenericType<List<Image>>() {});
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
