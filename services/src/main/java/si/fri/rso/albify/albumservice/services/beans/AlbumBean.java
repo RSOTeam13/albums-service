@@ -15,6 +15,7 @@ import si.fri.rso.albify.albumservice.lib.Album;
 import si.fri.rso.albify.albumservice.models.converters.AlbumConverter;
 import si.fri.rso.albify.albumservice.models.entities.AlbumEntity;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
@@ -52,6 +53,16 @@ public class AlbumBean {
     private final MongoClient mongoClient = MongoClients.create(settings);
     private final MongoDatabase database = mongoClient.getDatabase("albify");
     private final MongoCollection<AlbumEntity> albumsCollection = database.getCollection("albums", AlbumEntity.class);
+
+    @PreDestroy
+    private void onDestroy() {
+        try {
+            mongoClient.close();
+        } catch (Exception e) {
+            log.severe("Error when closing album bean database connection.");
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Returns album by its ID.
