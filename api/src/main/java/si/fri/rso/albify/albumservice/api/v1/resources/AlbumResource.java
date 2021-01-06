@@ -132,11 +132,6 @@ public class AlbumResource {
             return Response.status(400, "Image ID is not present.").build();
         }
 
-        Image image = imageServiceBean.getImage(imageId.getId());
-        if (image == null || image.getId() == null) {
-            return Response.status(404, "Image doesn't exists.").build();
-        }
-
         AlbumEntity updatedEntity = albumBean.addImageToAlbum(albumId, new ObjectId(imageId.getId()));
         if (updatedEntity == null) {
             return Response.status(500, "There was a problem while adding image to album.").build();
@@ -155,11 +150,6 @@ public class AlbumResource {
 
         if (!entity.getUserId().toString().equals(request.getProperty("userId").toString())) {
             return Response.status(Response.Status.FORBIDDEN).build();
-        }
-
-        Image image = imageServiceBean.getImage(imageId);
-        if (image == null || image.getId() == null) {
-            return Response.status(404, "Image doesn't exists.").build();
         }
 
         if (!entity.getImages().contains(new ObjectId(imageId))) {
